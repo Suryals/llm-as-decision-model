@@ -1,5 +1,5 @@
-"""Portrait 4:5 cards (1080x1350) for LinkedIn's multi-image carousel, which
-crops the wide article figures. Same content as the article, re-laid out.
+"""Portrait 4:5 cards (1080x1350): light for LinkedIn's carousel, which crops
+the wide article figures, and dark for X. Same content as the article, re-laid out.
 
 Usage:  uv run python -m src.cards
 """
@@ -13,8 +13,11 @@ from src.sketches import IMG, MODES, answer, arrow, bars, box, canvas, say
 DPI = 135  # 8in x 10in -> 1080 x 1350
 
 
-def save(fig, name: str) -> None:
-    fig.savefig(IMG / f"li_{name}.png", dpi=DPI, facecolor=fig.get_facecolor())
+PREFIX = {"light": "li", "dark": "x"}  # LinkedIn light, X dark
+
+
+def save(fig, name: str, mode: str) -> None:
+    fig.savefig(IMG / f"{PREFIX[mode]}_{name}.png", dpi=DPI, facecolor=fig.get_facecolor())
     plt.close(fig)
 
 
@@ -43,7 +46,7 @@ def scorecard(c: dict) -> None:
         if i < len(rows) - 1:
             ax.plot([4, 76], [y - 12.5, y - 12.5], color=c["ink2"], lw=0.8, alpha=0.4)
     say(ax, c, 4, 3, "suryal.dev", size=9, color=c["ink2"])
-    save(fig, "1_scorecard")
+    save(fig, "1_scorecard", c["mode"])
 
 
 def concept(c: dict) -> None:
@@ -71,7 +74,7 @@ def concept(c: dict) -> None:
             bars(ax, c, 50, y - 6.5, probs, col, width=17, row=3.6)
     say(ax, c, 4, 3.5, "Same answer shape as Jev, so both are scored the same way.",
         size=9.5, color=c["q4"])
-    save(fig, "2_concept")
+    save(fig, "2_concept", c["mode"])
 
 
 def rules(c: dict) -> None:
@@ -108,13 +111,13 @@ def rules(c: dict) -> None:
             ax.scatter([xa], [y], s=90, color=cols[i], zorder=3)
             say(ax, c, 67, y, f"{before} -> {after}", size=10, ha="left")
     say(ax, c, 4, 3.5, "hollow = before the rule, solid = after", size=9.5, color=c["ink2"])
-    save(fig, "3_rules")
+    save(fig, "3_rules", c["mode"])
 
 
 if __name__ == "__main__":
-    c = MODES["light"]
     with plt.xkcd(scale=0.6, length=120, randomness=2):
         plt.rcParams["path.effects"] = []
-        for card in (scorecard, concept, rules):
-            card(c)
-    print(f"wrote li_1_scorecard, li_2_concept, li_3_rules to {IMG}")
+        for mode, c in MODES.items():
+            for card in (scorecard, concept, rules):
+                card({**c, "mode": mode})
+    print(f"wrote li_* (light) and x_* (dark) cards to {IMG}")
