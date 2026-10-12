@@ -6,7 +6,7 @@ Images: LinkedIn uses the light versions, X the dark ones.
 
 ## LinkedIn
 
-Images (in this order): `img/scorecard_light.png`, `img/concept_light.png`, `img/rules_light.png`
+Images (in this order, 1080x1350 portrait so the carousel does not crop): `img/li_1_scorecard.png`, `img/li_2_concept.png`, `img/li_3_rules.png` (from `src/cards.py`)
 
 Can a small LLM replace a dedicated decision model?
 
